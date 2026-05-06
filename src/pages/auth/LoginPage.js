@@ -23,7 +23,7 @@ export function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: 'teacher@school.com', password: 'password123' },
+    defaultValues: { email: 'teacher@school.com', password: '' },
   });
 
   if (isAuthenticated) {
@@ -63,7 +63,7 @@ export function LoginPage() {
           <div className="grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
             <p>Teacher: teacher@school.com</p>
             <p>Principal: principal@school.com</p>
-            <p>Password: password123</p>
+            <p>Demo credentials are in README.md</p>
           </div>
         </div>
 

@@ -12,7 +12,7 @@ Project structure
 
 Authentication flow
 - The login page validates email and password with React Hook Form and Zod.
-- auth.service.js checks mock users and stores a token-like session in localStorage.
+- auth.service.js checks mock users against a stored mock password hash and stores a token-like session in localStorage.
 - AuthContext exposes the current user, token state, login, and logout actions.
 - Invalid login attempts show a toast and keep the user on the auth page.
 
@@ -41,5 +41,5 @@ Assumptions
 - This is a frontend assignment, so MongoDB is not included in the client project.
 - Uploaded files are previewed as data URLs and stored locally for demo purposes.
 - Scheduling state is UI-derived as scheduled, active, or expired.
-- Seed data creates 600 mock content records to demonstrate large-list behavior.
+- Seed data creates 60 mock content records to demonstrate large-list behavior.
 - Accepted upload types are JPG, PNG, and GIF with a 10MB max file size.

@@ -11,21 +11,21 @@ const USERS = [
     id: 'principal-1',
     name: 'Anita Sharma',
     email: 'principal@school.com',
-    password: 'password123',
+    passwordHash: 'a9e63a98',
     role: ROLES.PRINCIPAL,
   },
   {
     id: 'teacher-1',
     name: 'Ravi Mehta',
     email: 'teacher@school.com',
-    password: 'password123',
+    passwordHash: 'a9e63a98',
     role: ROLES.TEACHER,
   },
   {
     id: 'teacher-2',
     name: 'Neha Iyer',
     email: 'teacher2@school.com',
-    password: 'password123',
+    passwordHash: 'a9e63a98',
     role: ROLES.TEACHER,
   },
 ];
@@ -63,7 +63,8 @@ function makeContent(index) {
 }
 
 export function initializeStore() {
-  if (!localStorage.getItem(STORAGE_KEYS.users)) {
+  const storedUsers = localStorage.getItem(STORAGE_KEYS.users);
+  if (!storedUsers || storedUsers.includes('"password"')) {
     localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(USERS));
   }
 

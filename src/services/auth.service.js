@@ -3,8 +3,17 @@ import { clearSession, readStore, writeStore } from './storage';
 
 function sanitizeUser(user) {
   if (!user) return null;
-  const { password, ...safeUser } = user;
+  const { password, passwordHash, ...safeUser } = user;
   return safeUser;
+}
+
+function hashMockPassword(value) {
+  let hash = 2166136261;
+  for (const char of value || '') {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
 export const authService = {
@@ -13,7 +22,7 @@ export const authService = {
       const users = readStore('users', []);
       const user = users.find((item) => item.email.toLowerCase() === credentials.email.toLowerCase());
 
-      if (!user || user.password !== credentials.password) {
+      if (!user || user.passwordHash !== hashMockPassword(credentials.password)) {
         throw new Error('Invalid email or password.');
       }
 
