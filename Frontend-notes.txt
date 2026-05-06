@@ -1,0 +1,45 @@
+Content Broadcasting System - Frontend Notes
+
+Project structure
+- src/components contains reusable UI and content display components.
+- src/pages contains route-level screens grouped by auth, teacher, principal, and public flows.
+- src/layouts contains the authenticated sidebar layout.
+- src/routes contains protected route logic.
+- src/services contains auth, content, approval, and API client modules.
+- src/context contains AuthContext for session state.
+- src/hooks contains reusable async and debounce hooks.
+- src/utils contains constants and date helpers.
+
+Authentication flow
+- The login page validates email and password with React Hook Form and Zod.
+- auth.service.js checks mock users and stores a token-like session in localStorage.
+- AuthContext exposes the current user, token state, login, and logout actions.
+- Invalid login attempts show a toast and keep the user on the auth page.
+
+Role-based routing
+- ProtectedRoute redirects unauthenticated users to /login.
+- Teacher routes only allow the teacher role.
+- Principal routes only allow the principal role.
+- After login, users are redirected to the correct dashboard based on role.
+- The public /live/:teacherId route does not require authentication.
+
+API integration approach
+- Components do not make API calls directly.
+- auth.service.js, content.service.js, and approval.service.js are the only data access layer used by UI.
+- apiClient.js is Axios-ready and attaches the stored token to requests.
+- The current services simulate backend latency and persist data in localStorage.
+- To use MongoDB, create backend endpoints and replace service internals with apiClient calls.
+
+State management approach
+- AuthContext handles global authentication state.
+- Route pages keep local UI state for filters, modal state, selected files, and pagination.
+- useAsync centralizes loading, error, and refresh behavior.
+- useDebouncedValue prevents search filters from reloading too aggressively.
+- Large lists are paginated to avoid rendering hundreds of rows at once.
+
+Assumptions
+- This is a frontend assignment, so MongoDB is not included in the client project.
+- Uploaded files are previewed as data URLs and stored locally for demo purposes.
+- Scheduling state is UI-derived as scheduled, active, or expired.
+- Seed data creates 600 mock content records to demonstrate large-list behavior.
+- Accepted upload types are JPG, PNG, and GIF with a 10MB max file size.
