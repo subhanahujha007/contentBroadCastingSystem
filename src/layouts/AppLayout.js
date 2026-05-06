@@ -1,6 +1,7 @@
-import { BarChart3, FileCheck2, Files, LogOut, Megaphone, UploadCloud } from 'lucide-react';
+import { BarChart3, FileCheck2, Files, LogOut, Megaphone, Moon, Sun, UploadCloud } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/Button';
 
 const navItems = {
@@ -18,6 +19,7 @@ const navItems = {
 
 export function AppLayout() {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const items = navItems[user?.role] || [];
 
@@ -64,7 +66,11 @@ export function AppLayout() {
           })}
         </nav>
 
-        <div className="mt-8">
+        <div className="mt-8 grid gap-2">
+          <Button aria-label="Toggle light and dark theme" className="w-full justify-start" onClick={toggleTheme} variant="secondary">
+            {isDark ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+            {isDark ? 'Light mode' : 'Dark mode'}
+          </Button>
           <Button className="w-full justify-start" onClick={handleLogout} variant="secondary">
             <LogOut size={17} aria-hidden="true" />
             Logout

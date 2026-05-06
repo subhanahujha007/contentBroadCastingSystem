@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ImagePlus, UploadCloud } from 'lucide-react';
+import { Eye, ImagePlus, UploadCloud } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { BroadcastPreviewModal } from '../../components/content/BroadcastPreviewModal';
 import { Button } from '../../components/ui/Button';
 import { FormField } from '../../components/ui/FormField';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -43,6 +44,7 @@ function fileToDataUrl(file) {
 export function UploadContentPage() {
   const navigate = useNavigate();
   const [previewUrl, setPreviewUrl] = useState('');
+  const [showDisplayPreview, setShowDisplayPreview] = useState(false);
   const now = useMemo(() => new Date(), []);
   const later = useMemo(() => new Date(now.getTime() + 3 * 60 * 60 * 1000), [now]);
   const {
@@ -63,6 +65,16 @@ export function UploadContentPage() {
   });
 
   const selectedFile = watch('file')?.[0];
+  const draftPreview = {
+    title: watch('title'),
+    subject: watch('subject'),
+    description: watch('description'),
+    previewUrl,
+    status: 'pending',
+    startTime: watch('startTime'),
+    endTime: watch('endTime'),
+    rotationDuration: watch('rotationDuration'),
+  };
 
   async function handleFileChange(event) {
     const file = event.target.files?.[0];
@@ -146,7 +158,13 @@ export function UploadContentPage() {
                 </div>
               </div>
             )}
-            <p className="mt-3 truncate text-sm font-bold text-slate-700">{selectedFile?.name || 'No file selected'}</p>
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <p className="min-w-0 truncate text-sm font-bold text-slate-700">{selectedFile?.name || 'No file selected'}</p>
+              <Button className="min-h-9 px-3" disabled={!previewUrl} onClick={() => setShowDisplayPreview(true)} variant="secondary">
+                <Eye size={16} aria-hidden="true" />
+                Preview
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -157,6 +175,12 @@ export function UploadContentPage() {
           </Button>
         </div>
       </form>
+      <BroadcastPreviewModal
+        item={draftPreview}
+        onClose={() => setShowDisplayPreview(false)}
+        open={showDisplayPreview}
+        title="Upload content preview"
+      />
     </>
   );
 }

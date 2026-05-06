@@ -68,7 +68,7 @@ export function initializeStore() {
   }
 
   if (!localStorage.getItem(STORAGE_KEYS.content)) {
-    const seededContent = Array.from({ length: 600 }, (_, index) => makeContent(index));
+    const seededContent = Array.from({ length: 60 }, (_, index) => makeContent(index));
     localStorage.setItem(STORAGE_KEYS.content, JSON.stringify(seededContent));
   }
 }

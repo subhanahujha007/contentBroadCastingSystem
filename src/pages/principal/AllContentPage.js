@@ -8,7 +8,7 @@ import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { contentService } from '../../services/content.service';
 import { STATUS_OPTIONS } from '../../utils/constants';
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 15;
 
 export function AllContentPage() {
   const [status, setStatus] = useState('all');

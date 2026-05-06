@@ -1,12 +1,14 @@
-import { Check, X } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { Check, Eye, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { BroadcastPreviewModal } from '../../components/content/BroadcastPreviewModal';
 import { ContentPreview } from '../../components/content/ContentPreview';
 import { ContentTable } from '../../components/content/ContentTable';
 import { Button } from '../../components/ui/Button';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { FormField } from '../../components/ui/FormField';
 import { Modal } from '../../components/ui/Modal';
+import { Pagination } from '../../components/ui/Pagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { SkeletonRows } from '../../components/ui/Skeleton';
 import { useAsync } from '../../hooks/useAsync';
@@ -14,14 +16,24 @@ import { approvalService } from '../../services/approval.service';
 import { contentService } from '../../services/content.service';
 import { CONTENT_STATUS } from '../../utils/constants';
 
+const PAGE_SIZE = 15;
+
 export function PendingApprovalPage() {
   const [rejectingItem, setRejectingItem] = useState(null);
+  const [previewItem, setPreviewItem] = useState(null);
   const [reason, setReason] = useState('');
   const [busyId, setBusyId] = useState('');
+  const [page, setPage] = useState(1);
   const loadPending = useCallback(() => contentService.listAll({ status: CONTENT_STATUS.PENDING }), []);
   const { data: items = [], loading, error, execute } = useAsync(loadPending, { initialData: [] });
 
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const visibleItems = useMemo(() => items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [items, page]);
   const selected = useMemo(() => items[0], [items]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   async function approve(item) {
     setBusyId(item.id);
@@ -78,23 +90,32 @@ export function PendingApprovalPage() {
       {error ? <div className="card p-4 text-sm font-bold text-rose-700">{error}</div> : null}
       {!loading && !error && items.length === 0 ? <EmptyState description="Approved and rejected items remain available in All Content." title="No pending content" /> : null}
       {!loading && !error && items.length > 0 ? (
-        <ContentTable
-          actions={(item) => (
-            <div className="flex flex-wrap gap-2">
-              <Button loading={busyId === item.id} onClick={() => approve(item)}>
-                <Check size={16} aria-hidden="true" />
-                Approve
-              </Button>
-              <Button disabled={busyId === item.id} onClick={() => setRejectingItem(item)} variant="danger">
-                <X size={16} aria-hidden="true" />
-                Reject
-              </Button>
-            </div>
-          )}
-          items={items}
-          showTeacher
-        />
+        <>
+          <ContentTable
+            actions={(item) => (
+              <div className="flex flex-wrap gap-2">
+                <Button loading={busyId === item.id} onClick={() => approve(item)}>
+                  <Check size={16} aria-hidden="true" />
+                  Approve
+                </Button>
+                <Button disabled={busyId === item.id} onClick={() => setPreviewItem(item)} variant="secondary">
+                  <Eye size={16} aria-hidden="true" />
+                  Preview
+                </Button>
+                <Button disabled={busyId === item.id} onClick={() => setRejectingItem(item)} variant="danger">
+                  <X size={16} aria-hidden="true" />
+                  Reject
+                </Button>
+              </div>
+            )}
+            items={visibleItems}
+            showTeacher
+          />
+          <Pagination page={page} totalPages={totalPages} itemCount={items.length} visibleCount={visibleItems.length} onPageChange={setPage} />
+        </>
       ) : null}
+
+      <BroadcastPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} open={Boolean(previewItem)} title="Pending approval preview" />
 
       <Modal
         footer={
