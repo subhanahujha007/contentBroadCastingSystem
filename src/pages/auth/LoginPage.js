@@ -63,13 +63,13 @@ export function LoginPage() {
           <div className="grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
             <p>Teacher: teacher@school.com</p>
             <p>Principal: principal@school.com</p>
-            <p>Demo credentials are in README.md</p>
+            <p>Password: password123</p>
+            <p>Password: password123</p>
           </div>
         </div>
 
         <form className="card p-6 sm:p-8" onSubmit={handleSubmit(onSubmit)}>
           <h2 className="text-2xl font-extrabold text-slate-950">Sign in</h2>
-          <p className="mt-2 text-sm text-slate-600">Role-based routing starts after login.</p>
 
           <div className="mt-7 grid gap-4">
             <FormField error={errors.email?.message} label="Email">
